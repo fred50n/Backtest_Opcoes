@@ -1,7 +1,14 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 import math
+
+def formatar_br(valor, casas=2):
+    if pd.isna(valor):
+        return ""
+    # Formata com vírgula como decimal e ponto como milhar
+    return f"{valor:,.{casas}f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 # Configuracao da pagina
 st.set_page_config(page_title="Dashboard Backtest", layout="wide")
@@ -156,10 +163,11 @@ def main():
         # Secao 1: Resumo do Backtest
         st.subheader("📋 Resumo do Backtest")
         col1, col2, col3 = st.columns(3)
-        col1.metric("Total de Operações", len(df_resultados))
-        col2.metric("Lucro Total Acumulado", f"R$ {df_resultados['resultado_total'].sum():.2f}")
+        col1.metric("Total de Operações", formatar_br(len(df_resultados), 0))
+        lucro_total = df_resultados['resultado_total'].sum()
+        col2.metric("Lucro Total Acumulado", f"R$ {formatar_br(lucro_total, 2)}")
         taxa_acerto = (df_resultados["resultado_total"] > 0).mean() * 100
-        col3.metric("Taxa de Acerto (Gain)", f"{taxa_acerto:.2f}%")
+        col3.metric("Taxa de Acerto (Gain)", f"{formatar_br(taxa_acerto, 2)}%")
         
         if st.button("💾 Exportar Resultados para CSV na raiz do projeto"):
             df_resultados.to_csv("df_resultados_exportado.csv", index=False)
@@ -168,6 +176,11 @@ def main():
         # Secao 2: Evolucao e Individuais
         st.subheader("Evolução Patrimonial e Resultados")
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8))
+        
+        # Formatadores para o Eixo Y
+        fmt_y = ticker.FuncFormatter(lambda x, pos: formatar_br(x, 0))
+        ax1.yaxis.set_major_formatter(fmt_y)
+        ax2.yaxis.set_major_formatter(fmt_y)
         
         ax1.plot(df_resultados["data_saida"], df_resultados["pnl_acumulado"], marker='o', linestyle='-', color='#1f77b4')
         ax1.set_title("Evolução do PnL Acumulado")
@@ -211,7 +224,7 @@ def main():
                 axes_pie1[idx].text(0.5, 0.5, 'Sem dados', ha='center', va='center')
                 axes_pie1[idx].axis('off')
             else:
-                axes_pie1[idx].pie([qtd_gains, qtd_losses], labels=['Gain', 'Loss'], autopct='%1.1f%%', colors=['#2ca02c', '#d62728'], startangle=90)
+                axes_pie1[idx].pie([qtd_gains, qtd_losses], labels=['Gain', 'Loss'], autopct=lambda pct: f"{pct:.1f}%".replace(".", ","), colors=['#2ca02c', '#d62728'], startangle=90)
             axes_pie1[idx].set_title(f"Qtd Op. ({ano})")
             
             # Gráfico Ponderado por Valor Financeiro
@@ -222,7 +235,7 @@ def main():
                 axes_pie2[idx].text(0.5, 0.5, 'Sem dados', ha='center', va='center')
                 axes_pie2[idx].axis('off')
             else:
-                axes_pie2[idx].pie([val_gains, val_losses], labels=['Valor Gain', 'Valor Loss'], autopct='%1.1f%%', colors=['#2ca02c', '#d62728'], startangle=90)
+                axes_pie2[idx].pie([val_gains, val_losses], labels=['Valor Gain', 'Valor Loss'], autopct=lambda pct: f"{pct:.1f}%".replace(".", ","), colors=['#2ca02c', '#d62728'], startangle=90)
             axes_pie2[idx].set_title(f"Vol Finan. ({ano})")
             
         st.markdown("**% de Operações (Gain vs Loss)**")
