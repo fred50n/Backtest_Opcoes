@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Dados e Arquivos Grandes (B3)
+# O GitHub possui limite de 100MB por arquivo. Os arquivos da B3 passam deste limite.
+Cotacao_Historica/
+dados_tratados.csv
+resultados_backtest.csv
+df_resultados_exportado.csv
+
+# Excel e Relatórios Temporários
+~$*.xlsx
+*.xlsx.tmp
+
+# IDEs
+.vscode/
+.idea/
+.project
+.pydevproject
+.settings/
