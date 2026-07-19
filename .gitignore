@@ -15,6 +15,7 @@ Cotacao_Historica/
 dados_tratados.csv
 resultados_backtest.csv
 df_resultados_exportado.csv
+resultado_otimizacao.csv
 
 # Excel e Relatórios Temporários
 ~$*.xlsx

@@ -42,6 +42,12 @@ Para visualizar o gráfico de evolução do PnL Acumulado e a distribuição de 
 python 03_plotar_resultados.py
 ```
 
+### Passo 4: Otimização de Parâmetros
+Para testar múltiplas combinações de variáveis (margem de strike, alvo de lucro, tempo limite, etc.) nos últimos 12 meses e descobrir os 10 melhores cenários, execute:
+```bash
+python 04_otimizacao_parametros.py
+```
+
 ---
 
 ## 📊 Dashboard Interativo (Streamlit)
